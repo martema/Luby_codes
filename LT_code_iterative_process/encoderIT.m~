@@ -1,0 +1,30 @@
+function [ tn, G ] = encoderIT(sn,d)
+%ENCODER LT code encoder
+%   [tn, G]=encoder(sn,d) outputs a coded packet tn with degree d and the
+%   respective column of the generator matrix
+%   sn: source
+%   d: degree
+%   tn: coded packet
+%   G: column vector of the generator matrix
+    
+    %% Initialization
+    v=(1:length(sn)); 
+    G=zeros(length(sn),1);
+    tn=0;
+    pacchetto=[];
+    
+    %% Coding
+    for i=1:d
+        % Given the 
+        % Dato il grado i pacchetti vengono scelti a caso con legge
+        % uniforme decrementando di volta in volta il numero dei pacchetti
+        % ed eliminado il pacchetto scelto
+        random=randi(length(v),1,1);
+        pacchetto(i)=v(random);
+        % Il valore del pacchetto codificato viene aggiornato tramite
+        % un'operazione di xor con il valore del pacchetto sorgente scelto
+        tn=bitxor(tn,sn(pacchetto(i)));
+        v(random)=[];
+    end
+    G(pacchetto)=1;
+end

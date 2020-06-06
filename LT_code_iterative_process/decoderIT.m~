@@ -1,0 +1,85 @@
+function [ tn, G, snRec, rec] = decoderIT( tn, G, snRec, rec)
+%DECODER Decodificatore codice LT
+%   [tn,G,snRec,numRec]=decoder(tn, G, snRec, numRec) decodes the source
+%   through 
+decodifica la 
+%   sorgente tramite il vettore dei pacchetti codificati tn
+%   e la matrice G.
+%   tn: vettore dei pacchetti codificati
+%   G: matrice generatrice del codice
+%   snRec: pacchetti decodificati
+%   rec: indici dei pacchetti decodificati
+
+    %% Aggiornamento della matrice G
+    szG=size(G);
+    if szG(2)~=0
+    A=G(rec,szG(2))==1;
+    v=rec(A);
+    if ~isempty(v)
+        for i=1:length(v)
+            tn(szG(2))=xor(tn(szG(2)),snRec(v(i)));
+        end
+        G(rec,szG(2))=0;
+    end
+    
+    %% Decodifica
+    [pSorg, pCod, pSorgComp]=cercaGradoUno(G);
+    if ~isempty(pSorg)% E' stato trovato almeno un pacchetto di grado uno
+        snRec(pSorgComp)=tn(pCod); % Recupero dei valori di sn trovati
+        rec=[rec pSorg]; % Numero di pacchetti recuperati
+        % Aggiornamento dei valori dei pacchetti codificati tramite i pacchetti gi? recuperati
+        A=G(pSorg,:)==1;
+        szA=size(A);
+        for i=1:szA(1)
+            tn(A(i,:))=xor(tn(A(i,:)),snRec(pSorg(i)));
+        end
+        % Aggiornamento della matrice e del vettore dei pacchetti codificati
+        G(:,pCod)=[];
+        G(pSorg,:)=0;
+        tn(pCod)=[];
+    end
+    end
+end
+%
+%    G=sparse([],[],[],K,length(tn));
+%    for i=1:length(tn)
+%        pacchetti=tn{i}{2};
+%        G(pacchetti,i)=1;
+%        tm(i)=tn{i}{3}; % Vettore contenente soltanto i valori dei pacchetti codificati
+%    end
+%    G=sparse(G);
+%    %Inizializzazione
+%    snrec=[];
+%    fail=false;
+%    recuperati=0;
+%    
+%    while recuperati<K
+%        home,disp(['%executed ciclo = ',num2str(round(100*recuperati/K))])
+%        [psorg, pcod, psorgcomp]=cercaGradoUno(G);
+%        if length(psorg)~=0 % E' stato trovato almeno un pacchetto di grado uno
+%            snrec(psorgcomp)=tm(pcod); % Recupero dei valori di sn trovati 
+ %           recuperati=recuperati+length(psorg); % Numero di pacchetti recuperati
+ %           A=G(psorg,:)==1; % Matrice che identifica i pacchetti codificati che contengono i pacchetti gi? recuperati
+ %           szA=size(A);
+ %           % Aggiornamento dei valori dei pacchetti codificati tramite i
+ %           % pacchetti gi? recuperati
+ %           for i=1:szA(1)
+ %           tm(A(i,:))=xor(tm(A(i,:)),snrec(psorg(i)));
+ %           end
+%           C=false(sz,max(length(G)));
+%           C(pg1,:)=A;
+%           G(C)=0
+            % Aggiornamento della matrice e del vettore dei pacchetti
+            % codificati
+ %           G(:,pcod)=[];
+  %          G(psorg,:)=0;
+   %         tm(pcod)=[];
+    %    else % Non ? stato trovato un pacchetto di grado uno;
+     %       fail=true;
+     %       return
+     %   end
+   % end
+    
+    
+    
+    
